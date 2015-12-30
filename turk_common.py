@@ -53,6 +53,7 @@ def repeat_with_confirmation(operation, iterable):
     for item in iterable:
         if auto_approve:
             operation(item)
+            continue
 
         invalid_response = True
         while invalid_response:
