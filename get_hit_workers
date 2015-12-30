@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
+"""
+Get all workers whose HIT attempts have been approved and write them to a file
+(one on each line)
+"""
+
 import sys
 
 import turk_common
 import logger
+
+STATUS = 'Approved'
 
 def worker_id_from_assignments(assignments):
     for assignment in assignments:
@@ -11,7 +18,7 @@ def worker_id_from_assignments(assignments):
 
 def main(filename, hit):
     with open(filename, 'w') as output:
-        assignments = turk_common.get_assignments(hit, 'Approved')
+        assignments = turk_common.get_assignments(hit, STATUS)
         workers = worker_id_from_assignments(assignments)
 
         for worker in workers:

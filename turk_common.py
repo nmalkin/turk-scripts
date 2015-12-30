@@ -1,3 +1,7 @@
+"""
+Functions for interacting with Mechanical Turk that are shared between the scrpts
+"""
+
 import os
 
 import mturk
@@ -7,6 +11,9 @@ import logger
 turk = mturk.MechanicalTurk()
 
 def get_assignments(hit_id, status):
+    """
+    Get all the HIT's assignments with the given status
+    """
     assert status in {'Submitted', 'Approved', 'Rejected'}
 
     page = 1
@@ -37,6 +44,8 @@ def get_assignments(hit_id, status):
 def repeat_with_confirmation(operation, iterable):
     """
     Perform `operation` on each item in `iterable`, as long as the user approves
+
+    Can be overridden with the `TURK_AUTO_APPROVE` environment variable.
     """
     auto_approve = os.getenv('TURK_AUTO_APPROVE') == '1'
     logger.info('auto approve is %s' % 'on' if auto_approve else 'off')

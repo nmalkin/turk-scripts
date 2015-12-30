@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+"""
+Send a message to everyone who requested a given qualification,
+telling them to check out the HIT at the provided URL.
+To avoid duplicate messages, the IDs of contacted workers are written to a file,
+and the file is checked before sending new messages.
+"""
+
 import sys
 import time
 
@@ -26,12 +33,12 @@ def get_qualification_requests(qualification_id):
         results_available = num_results > 0
 
         if results_available:
-            qualifications = result['QualificationRequest']
+            qualification_requests = result['QualificationRequest']
             if num_results == 1:
-                yield qualifications
+                yield qualification_requests
             else:
-                for qualification in qualifications:
-                    yield qualification
+                for qualification_request in qualification_requests:
+                    yield qualification_request
 
         page += 1
 
@@ -48,11 +55,13 @@ def notify_workers(workers, subject, message):
     return response
 
 def respond(contacted_filename, qualification, hit_url):
+    # Get all the workers who have requested the qualification
     requested = set()
     for request in get_qualification_requests(qualification):
         worker = request['SubjectId']
         requested.add(worker)
 
+    # Get a list of everyone who's been contacted before
     try:
         with open(contacted_filename, 'r') as f:
             already_contacted = {line.strip() for line in f.readlines()}
@@ -60,11 +69,13 @@ def respond(contacted_filename, qualification, hit_url):
     except FileNotFoundError:
         already_contacted = set()
 
+    # Contact everyone who hasn't gotten a message yet
     to_contact = requested - already_contacted
     if len(to_contact) > 0:
         message = MESSAGE % hit_url
         notify_workers(to_contact, SUBJECT, message)
 
+    # Save the contacted workers, appending to the ones already there
     with open(contacted_filename, 'a') as f:
         for worker in to_contact:
             f.write('%s\n' % worker)
