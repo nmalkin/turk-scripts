@@ -1,0 +1,87 @@
+#!/usr/bin/env python
+
+import sys
+import time
+
+import turk_common
+import logger
+
+SUBJECT = "Your qualification request on Mechanical Turk"
+MESSAGE = "Thank you for your interest in our HITs! You can obtain the qualification you requested by completing the HIT at %s"
+SLEEP_INTERVAL = 60
+
+def get_qualification_requests(qualification_id):
+    page = 1
+    results_available = True
+    while results_available:
+        response = turk_common.turk.request('GetQualificationRequests', {
+                'Operation': 'GetQualificationRequests',
+                'QualificationTypeId': qualification_id,
+                'Status': 'Granted',
+                'PageNumber': page})
+
+        result = response['GetQualificationRequestsResponse']['GetQualificationRequestsResult']
+        logger.debug(result)
+        num_results = int(result['NumResults'])
+        results_available = num_results > 0
+
+        if results_available:
+            qualifications = result['QualificationRequest']
+            if num_results == 1:
+                yield qualifications
+            else:
+                for qualification in qualifications:
+                    yield qualification
+
+        page += 1
+
+def notify_workers(workers, subject, message):
+    logger.info('sending messages to %s' % workers)
+    response = turk_common.turk.request('NotifyWorkers', {
+            'Operation': 'NotifyWorkers',
+            'Subject': subject,
+            'MessageText': message,
+            'WorkerId': workers})
+
+    logger.debug(response)
+    assert response['NotifyWorkersResponse']['NotifyWorkersResult']['Request']['IsValid'] == 'True'
+    return response
+
+def respond(contacted_filename, qualification, hit_url):
+    requested = set()
+    for request in get_qualification_requests(qualification):
+        worker = request['SubjectId']
+        requested.add(worker)
+
+    try:
+        with open(contacted_filename, 'r') as f:
+            already_contacted = {line.strip() for line in f.readlines()}
+            logger.debug('already contacted: %s' % already_contacted)
+    except FileNotFoundError:
+        already_contacted = set()
+
+    to_contact = requested - already_contacted
+    if len(to_contact) > 0:
+        message = MESSAGE % hit_url
+        notify_workers(to_contact, SUBJECT, message)
+
+    with open(contacted_filename, 'a') as f:
+        for worker in to_contact:
+            f.write('%s\n' % worker)
+
+def main(contacted_filename, qualification, hit_url):
+    logger.info('=== respond_to_qual_request ===')
+    while True:
+        respond(contacted_filename, qualification, hit_url)
+        time.sleep(SLEEP_INTERVAL)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 4:
+        logger.critical('usage: %s worker_filename qualification_id' % sys.argv[0])
+        sys.exit(1)
+
+    contacted_filename = sys.argv[1]
+    qualification = sys.argv[2]
+    hit_url = sys.argv[3]
+
+    main(contacted_filename, qualification, hit_url)

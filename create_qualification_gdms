@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+
+import mturk
+
+import logger
+
+options = {
+    'Operation': 'CreateQualificationType',
+    'Name': 'Complete one of our entry-level HITs to get this qualification!',
+    'Description': "Everyone who succesfully completes one of our entry-level HITs (which don't require a qualification) will unlock this qualification to get higher-value HITs. (This qualification is assigned automatically; check back in a bit after you finish your first HIT.)",
+    'QualificationTypeStatus': 'Active',
+    'Keywords': 'survey, easy, quick'
+}
+
+m = mturk.MechanicalTurk()
+response = m.request('CreateQualificationType', options)
+logger.debug(response)
+
+qualification_id = response['CreateQualificationTypeResponse']['QualificationType']['QualificationTypeId']
+print(qualification_id)
