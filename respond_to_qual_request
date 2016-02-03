@@ -9,8 +9,9 @@ and the file is checked before sending new messages.
 
 import sys
 
-import turk_common
+import errors
 import logger
+import turk_common
 
 SUBJECT = "Your qualification request on Mechanical Turk"
 MESSAGE = "Thank you for your interest in our HITs! You can obtain the qualification you requested by completing some of our HITs at %s"
