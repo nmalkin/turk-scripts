@@ -72,6 +72,7 @@ def main(worker_filename, qualification):
         logger.debug('all workers: %s' % workers)
 
     new_workers = workers - already_granted
+    logger.debug('workers with qualifications: %s' % already_granted)
     logger.debug('workers without qualifications: %s' % new_workers)
 
     turk_common.repeat_with_confirmation(qualify, new_workers)
