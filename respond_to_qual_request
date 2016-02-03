@@ -8,14 +8,12 @@ and the file is checked before sending new messages.
 """
 
 import sys
-import time
 
 import turk_common
 import logger
 
 SUBJECT = "Your qualification request on Mechanical Turk"
 MESSAGE = "Thank you for your interest in our HITs! You can obtain the qualification you requested by completing the HIT at %s"
-SLEEP_INTERVAL = 120
 
 def get_qualification_requests(qualification_id):
     page = 1
@@ -82,9 +80,7 @@ def respond(contacted_filename, qualification, hit_url):
 
 def main(contacted_filename, qualification, hit_url):
     logger.info('=== respond_to_qual_request ===')
-    while True:
-        respond(contacted_filename, qualification, hit_url)
-        time.sleep(SLEEP_INTERVAL)
+    respond(contacted_filename, qualification, hit_url)
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
