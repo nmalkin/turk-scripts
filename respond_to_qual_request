@@ -13,7 +13,7 @@ import turk_common
 import logger
 
 SUBJECT = "Your qualification request on Mechanical Turk"
-MESSAGE = "Thank you for your interest in our HITs! You can obtain the qualification you requested by completing the HIT at %s"
+MESSAGE = "Thank you for your interest in our HITs! You can obtain the qualification you requested by completing some of our HITs at %s"
 
 def get_qualification_requests(qualification_id):
     page = 1
@@ -84,7 +84,7 @@ def main(contacted_filename, qualification, hit_url):
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
-        logger.critical('usage: %s worker_filename qualification_id' % sys.argv[0])
+        logger.critical('usage: %s worker_filename qualification_id hit_url' % sys.argv[0])
         sys.exit(1)
 
     contacted_filename = sys.argv[1]
