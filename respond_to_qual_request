@@ -23,7 +23,6 @@ def get_qualification_requests(qualification_id):
         response = turk_common.turk.request('GetQualificationRequests', {
                 'Operation': 'GetQualificationRequests',
                 'QualificationTypeId': qualification_id,
-                'Status': 'Granted',
                 'PageNumber': page})
 
         result = response['GetQualificationRequestsResponse']['GetQualificationRequestsResult']
@@ -53,7 +52,7 @@ def notify_workers(workers, subject, message):
     assert response['NotifyWorkersResponse']['NotifyWorkersResult']['Request']['IsValid'] == 'True'
     return response
 
-def respond(contacted_filename, qualification, hit_url):
+def respond(contacted_filename, qualification, hit, hit_url):
     # Get all the workers who have requested the qualification
     requested = set()
     for request in get_qualification_requests(qualification):
@@ -68,8 +67,11 @@ def respond(contacted_filename, qualification, hit_url):
     except FileNotFoundError:
         already_contacted = set()
 
-    # Contact everyone who hasn't gotten a message yet
-    to_contact = requested - already_contacted
+    # Get everyone who has already completed the precursor HIT
+    pending_assignments = set(turk_common.get_assignments(hit, 'Submitted'))
+
+    # Contact everyone who hasn't gotten a message yet and hasn't done the HIT
+    to_contact = requested - already_contacted - pending_assignments
     if len(to_contact) > 0:
         message = MESSAGE % hit_url
         notify_workers(to_contact, SUBJECT, message)
@@ -79,17 +81,18 @@ def respond(contacted_filename, qualification, hit_url):
         for worker in to_contact:
             f.write('%s\n' % worker)
 
-def main(contacted_filename, qualification, hit_url):
+def main(contacted_filename, qualification, hit_id, hit_url):
     logger.info('=== respond_to_qual_request ===')
-    respond(contacted_filename, qualification, hit_url)
+    respond(contacted_filename, qualification, hit_id, hit_url)
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
-        logger.critical('usage: %s worker_filename qualification_id hit_url' % sys.argv[0])
+        logger.critical('usage: %s worker_filename qualification_id hit_id hit_url' % sys.argv[0])
         sys.exit(1)
 
     contacted_filename = sys.argv[1]
     qualification = sys.argv[2]
-    hit_url = sys.argv[3]
+    hit_id = sys.argv[3]
+    hit_url = sys.argv[4]
 
-    main(contacted_filename, qualification, hit_url)
+    main(contacted_filename, qualification, hit_id, hit_url)
