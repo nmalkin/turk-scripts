@@ -1,6 +1,6 @@
-from os import getenv
-from raven import Client
+import os
+import raven
 
-sentry_url = getenv('SENTRY_URL')
+sentry_url = os.getenv('SENTRY_URL')
 if sentry_url:
-    sentry = Client(sentry_url)
+    sentry = raven.Client(dsn=sentry_url, release=raven.fetch_git_sha(os.path.join(os.path.dirname(__file__), os.pardir)))
