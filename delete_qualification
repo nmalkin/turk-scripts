@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import sys
+
+import mturk
+
+qualification_id = sys.argv[1]
+
+m = mturk.MechanicalTurk()
+
+r = m.request('DisposeQualificationType', {'Operation': 'DisposeQualificationType', 'QualificationTypeId': qualification_id})
+print(r)
