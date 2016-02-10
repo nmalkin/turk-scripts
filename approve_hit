@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+
+"""
+Approve all pending HITs, if the ID the Turker entered matches one in the grades file
+"""
+
+import csv
+import sys
+
+import mturk
+import xmltodict
+
+import logger
+import turk_common
+
+turk = mturk.MechanicalTurk()
+
+def get_completion_code(assignment):
+    answer_xml = assignment['Answer']
+    outer_answer = xmltodict.parse(answer_xml)
+    answer = outer_answer['QuestionFormAnswers']['Answer']
+
+    assert answer['QuestionIdentifier'] == 'completion_code'
+    return answer['FreeText']
+
+def get_approved_surveys(filename):
+    approved = set()
+    with open(filename, 'r') as f:
+        csvreader = csv.reader(f)
+        for (survey_id, grade) in csvreader:
+            if grade == '1':
+                approved.add(survey_id)
+
+    return approved
+
+def approve_assignment(assignment):
+    logger.info('approving %s' % assignment['AssignmentId'])
+    response = turk.request('ApproveAssignment', {
+            'Operation': 'ApproveAssignment',
+            'AssignmentId': assignment['AssignmentId']})
+
+    assert response['ApproveAssignmentResponse']['ApproveAssignmentResult']['Request']['IsValid'] == 'True'
+    return response
+
+def main(grade_filename, hit):
+    logger.info('=== approve_hit ===')
+    approved_surveys = get_approved_surveys(grade_filename)
+    logger.info('the following surveys can be approved: %s' % approved_surveys)
+
+    def passing(assignments):
+        for assignment in assignments:
+            logger.debug('assignment %s:' % assignment['AssignmentId'])
+            survey_id = get_completion_code(assignment)
+            if survey_id in approved_surveys:
+                yield assignment
+            else:
+                logger.info('survey %s did not get a passing grade. skipping.' % survey_id)
+
+    pending_assignments = turk_common.get_assignments(hit, 'Submitted')
+    passing_assignments = passing(pending_assignments)
+    turk_common.repeat_with_confirmation(approve_assignment, passing_assignments)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        logger.critical('usage: %s grade_filename hit_id' % sys.argv[0])
+        sys.exit(1)
+
+    grade_filename = sys.argv[1]
+    hit = sys.argv[2]
+
+    main(grade_filename, hit)

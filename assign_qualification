@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Assign the GDMS qualification to everyone in the provided file,
+Assign the qualification to everyone in the provided file,
 checking first that they don't have it already
 """
 
@@ -60,7 +60,7 @@ def workers_with_qualifications(qualifications):
     return workers
 
 def main(worker_filename, qualification):
-    logger.info('=== assign_qualification_gdms ===')
+    logger.info('=== assign_qualification ===')
     def qualify(worker):
         return assign_qualification(qualification, worker)
 
