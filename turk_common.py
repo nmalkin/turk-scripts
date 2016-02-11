@@ -48,7 +48,7 @@ def repeat_with_confirmation(operation, iterable):
     Can be overridden with the `TURK_AUTO_APPROVE` environment variable.
     """
     auto_approve = os.getenv('TURK_AUTO_APPROVE') == '1'
-    logger.info('auto approve is %s' % 'on' if auto_approve else 'off')
+    logger.info('auto approve is %s' % ('on' if auto_approve else 'off'))
 
     for item in iterable:
         if auto_approve:
