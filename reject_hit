@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+"""
+Approve all pending HITs, if the ID the Turker entered matches one in the grades file
+"""
+
+import csv
+import sys
+
+import mturk
+import xmltodict
+
+import logger
+import turk_common
+
+REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because we couldn't match the completion code you entered to any of our surveys. If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
+REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because you said that you "didn't read this survey's questions before answering," and our policies state: "Incomplete surveys or obvious attempts at cheating will not receive compensation." If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
+
+def get_completion_code(assignment):
+    answer_xml = assignment['Answer']
+    outer_answer = xmltodict.parse(answer_xml)
+    answer = outer_answer['QuestionFormAnswers']['Answer']
+
+    assert answer['QuestionIdentifier'] == 'completion_code'
+    return answer['FreeText']
+
+def get_grades(filename):
+    approved = set()
+    rejected = set()
+    with open(filename, 'r') as f:
+        csvreader = csv.reader(f)
+        for (survey_id, grade) in csvreader:
+            if grade == '0':
+                rejected.add(survey_id)
+            elif grade == '1':
+                approved.add(survey_id)
+            else:
+                logger.critical('unrecognized grade %s for survey %s' % (grade, survey_id))
+
+    return approved, rejected
+
+def reject_assignment(assignment):
+    logger.info('rejecting %s' % assignment['AssignmentId'])
+    response = turk_common.turk.request('RejectAssignment', {
+            'RequesterFeedback': REJECTION_MESSAGE,
+            'AssignmentId': assignment['AssignmentId']})
+
+    assert response['RejectAssignmentResponse']['RejectAssignmentResult']['Request']['IsValid'] == 'True'
+    return response
+
+def main(grade_filename, hit):
+    logger.info('=== reject_hit ===')
+    approved_surveys, rejected_surveys = get_grades(grade_filename)
+    logger.info('the following surveys can be rejected: %s' % rejected_surveys)
+
+    def rejected(assignments):
+        for assignment in assignments:
+            logger.debug('assignment %s:' % assignment['AssignmentId'])
+            survey_id = get_completion_code(assignment)
+            if survey_id in rejected_surveys:
+                yield assignment
+            elif survey_id in approved_surveys:
+                logger.info('survey %s got a passing grade. skipping.' % survey_id)
+            else:
+                logger.warn('survey %s is not in the grades file. full assignment: %s' % (survey_id, assignment))
+
+    pending_assignments = turk_common.get_assignments(hit, 'Submitted')
+    rejected_assignments = rejected(pending_assignments)
+    turk_common.repeat_with_confirmation(reject_assignment, rejected_assignments)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        logger.critical('usage: %s grade_filename hit_id' % sys.argv[0])
+        sys.exit(1)
+
+    grade_filename = sys.argv[1]
+    hit = sys.argv[2]
+
+    main(grade_filename, hit)
