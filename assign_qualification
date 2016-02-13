@@ -20,6 +20,7 @@ def get_qualifications(qualification_id):
                 'Operation': 'GetQualificationsForQualificationType',
                 'QualificationTypeId': qualification_id,
                 'Status': 'Granted',
+                'PageSize': 100,
                 'PageNumber': page})
 
         result = response['GetQualificationsForQualificationTypeResponse']['GetQualificationsForQualificationTypeResult']

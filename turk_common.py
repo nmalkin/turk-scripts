@@ -23,7 +23,7 @@ def get_assignments(hit_id, status):
                 'Operation': 'GetAssignmentsForHIT',
                 'HITId': hit_id,
                 'AssignmentStatus': status,
-                #'PageSize': 1, # debug
+                'PageSize': 100,
                 'PageNumber': page})
 
         result = response['GetAssignmentsForHITResponse']['GetAssignmentsForHITResult']
