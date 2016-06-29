@@ -13,8 +13,8 @@ import xmltodict
 import logger
 import turk_common
 
-REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because we couldn't match the completion code you entered to any of our surveys. If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
-REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because you said that you "didn't read this survey's questions before answering," and our policies state: "Incomplete surveys or obvious attempts at cheating will not receive compensation." If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
+# REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because we couldn't match the completion code you entered to any of our surveys. If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
+# REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because you said that you "didn't read this survey's questions before answering," and our policies state: "Incomplete surveys or obvious attempts at cheating will not receive compensation." If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
 
 def get_completion_code(assignment):
     answer_xml = assignment['Answer']
@@ -42,7 +42,7 @@ def get_grades(filename):
 def reject_assignment(assignment):
     logger.info('rejecting %s' % assignment['AssignmentId'])
     response = turk_common.turk.request('RejectAssignment', {
-            'RequesterFeedback': REJECTION_MESSAGE,
+            # 'RequesterFeedback': REJECTION_MESSAGE,
             'AssignmentId': assignment['AssignmentId']})
 
     assert response['RejectAssignmentResponse']['RejectAssignmentResult']['Request']['IsValid'] == 'True'
