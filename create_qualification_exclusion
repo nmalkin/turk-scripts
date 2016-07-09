@@ -10,8 +10,8 @@ import mturk
 import logger
 
 options = {
-    'Name': 'qualification17_autogranted',
-    'Description': 'This qualification is assigned automatically.',
+    'Name': 'qualification21_autogranted',
+    'Description': 'This qualification cannot be requested. It is assigned automatically.',
     'QualificationTypeStatus': 'Active'
 }
 
