@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Approve all pending HITs, if the ID the Turker entered matches one in the grades file
+Reject the HITs given in the grades file
 """
 
 import csv
@@ -13,7 +13,7 @@ import xmltodict
 import logger
 import turk_common
 
-# REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because we couldn't match the completion code you entered to any of our surveys. If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
+# REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we couldn't match the completion code you entered to any of our surveys, so we couldn't give you credit for the assignment. We apologize for the inconvenience, and don't worry: you're welcome to participate in our future HITs!"""
 # REJECTION_MESSAGE = """Thank you for your interest in our assignment! Unfortunately, we can't accept your submission because you said that you "didn't read this survey's questions before answering," and our policies state: "Incomplete surveys or obvious attempts at cheating will not receive compensation." If this was an accident, don't worry: you're welcome to participate in our future HITs!"""
 
 def get_completion_code(assignment):
