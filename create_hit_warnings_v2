@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+import sys
+
+import mturk
+
+qualification_id = sys.argv[1]
+excluded_qualification = sys.argv[2]
+excluded_qualification2 = sys.argv[3]
+
+question = '''<?xml version="1.0"?>
+<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
+    <ExternalURL>https://www.surveygizmo.com/s3/3034691/survey</ExternalURL>
+    <FrameHeight>1000</FrameHeight>
+</ExternalQuestion>
+'''
+
+options = {
+    'Title': 'Share your opinion on the design of three websites',
+    'Description': "We'll give you a few websites to visit, and we'll ask you for feedback about the design of each one.",
+    'Question': question,
+    'Reward': [{
+        'Amount': 2.00,
+        'CurrencyCode': 'USD'
+    }],
+    'AssignmentDurationInSeconds': 60*60,
+    'LifetimeInSeconds': 60*60*24*14,
+    'MaxAssignments': 10,
+    'Keywords': 'survey, personality',
+    'QualificationRequirement': [
+    {
+        'QualificationTypeId': mturk.LOCALE,
+        'Comparator': 'EqualTo',
+        'LocaleValue': {
+            'Country': 'US'
+        },
+        'RequiredToPreview': 'true'
+    }, {
+        'QualificationTypeId': mturk.P_APPROVED,
+        'Comparator': 'GreaterThan',
+        'IntegerValue': 95,
+        'RequiredToPreview': 'true'
+    }, {
+        'QualificationTypeId': qualification_id,
+        'Comparator': 'Exists',
+        'RequiredToPreview': 'false'
+    }, {
+        'QualificationTypeId': excluded_qualification,
+        'Comparator': 'DoesNotExist',
+        'RequiredToPreview': 'true'
+    }, {
+        'QualificationTypeId': excluded_qualification2,
+        'Comparator': 'DoesNotExist',
+        'RequiredToPreview': 'true'
+    }]
+}
+
+m = mturk.MechanicalTurk()
+r = m.request('CreateHIT', options)
+print(r)
