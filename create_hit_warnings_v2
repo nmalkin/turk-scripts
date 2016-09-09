@@ -20,7 +20,7 @@ options = {
     'Description': "We'll give you a few websites to visit, and we'll ask you for feedback about the design of each one.",
     'Question': question,
     'Reward': [{
-        'Amount': 2.00,
+        'Amount': 1.00,
         'CurrencyCode': 'USD'
     }],
     'AssignmentDurationInSeconds': 60*60,
