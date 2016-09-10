@@ -8,7 +8,7 @@ qualification_id = sys.argv[1]
 
 question = '''<?xml version="1.0"?>
 <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
-    <ExternalURL>https://www.surveygizmo.com/s3/3034691/survey</ExternalURL>
+    <ExternalURL>https://www.surveygizmo.com/s3/2910521/Getting-to-know-you</ExternalURL>
     <FrameHeight>1000</FrameHeight>
 </ExternalQuestion>
 '''
