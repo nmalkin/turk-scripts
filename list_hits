@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+import mturk
+import pprint
+
+m = mturk.MechanicalTurk()
+r = m.request('SearchHITs')
+pprint.pprint(r)
