@@ -5,10 +5,11 @@ import sys
 import mturk
 
 hitId = sys.argv[1]
+extension = sys.argv[2]
 
 options = {
     'HITId': hitId,
-    'MaxAssignmentsIncrement': 80
+    'MaxAssignmentsIncrement': int(extension)
 }
 
 m = mturk.MechanicalTurk()
