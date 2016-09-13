@@ -18,12 +18,22 @@ def get_number_of_assignments(hit_id, status):
             'HITId': hit_id,
             'AssignmentStatus': status})
     result = response['GetAssignmentsForHITResponse']['GetAssignmentsForHITResult']
-    return result['TotalNumResults']
+    return int(result['TotalNumResults'])
 
-def main(hit):
+def main(hit_id):
+    total = 0
     for status in ['Submitted', 'Approved', 'Rejected']:
-        assignments = get_number_of_assignments(hit, status)
+        assignments = get_number_of_assignments(hit_id, status)
+        total += assignments
         print('%s: %s' % (status, assignments))
+
+    print('Total submitted: %d' % total)
+
+    response = turk_common.turk.request('GetHIT', {
+            'HITId': hit_id,
+            'AssignmentStatus': status})
+    max_assignments = response['GetHITResponse']['HIT']['MaxAssignments']
+    print('Max assignments: %s' % max_assignments)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
