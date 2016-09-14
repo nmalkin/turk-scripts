@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import sys
+
+import xmltodict
+
+import logger
+import turk_common
+
+STATUSES = ['Approved']
+def main(mappings_filename, hit):
+    with open(mappings_filename, 'w') as output:
+        output.write('workerid,assignmentId\n')
+
+        for status in STATUSES:
+            for assignment in turk_common.get_assignments(hit, status):
+                output.write("%s,%s\n" %
+                    (assignment['WorkerId'], assignment['AssignmentId']))
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        logger.critical('usage: %s mappings_filename hit_id' % sys.argv[0])
+        sys.exit(1)
+
+    mappings_filename = sys.argv[1]
+    hit_id = sys.argv[2]
+    main(mappings_filename, hit_id)
