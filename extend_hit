@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+import sys
+
+import mturk
+
+hitId = sys.argv[1]
+extension = sys.argv[2]
+
+options = {
+    'HITId': hitId,
+    'MaxAssignmentsIncrement': int(extension)
+}
+
+m = mturk.MechanicalTurk()
+r = m.request('ExtendHIT', options)
+print(r)
