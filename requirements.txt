@@ -1,3 +1,1 @@
-raven
-git+https://github.com/nmalkin/mturk-python
-git+https://github.com/nmalkin/SurveyGizmo
+git+https://github.com/ctrlcctrlv/mturk-python.git
