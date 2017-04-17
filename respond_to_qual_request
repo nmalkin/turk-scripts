@@ -9,7 +9,6 @@ and the file is checked before sending new messages.
 
 import sys
 
-import errors
 import logger
 import turk_common
 
