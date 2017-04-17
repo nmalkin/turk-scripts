@@ -1,16 +1,21 @@
-Administrative scripts
-======================
+Mechanical Turk scripts
+=======================
 
-This directory contains a mishmash of scripts to administer the project's
-SurveyGizmo surveys and Mechanical Turk HITs and qualifications.
+This directory contains a mishmash of scripts written, at one point or another,
+to make it easier to run and review tasks on Amazon Mechanical Turk.
 
-If you have Docker, you can run them (with the dependencies containerized):
+Prerequisites
+-------------
+First, you'll want to install the [mturk-python][mturk-python] library.
 
-    make
-    ./run ./check_balance
+```sh
+python3 -m venv venv
+. ./venv/bin/activate
+pip install -r requirements.txt
+```
 
-Before doing this, you need to have the API keys for the respective services.
+You will also need an `mturkconfig.json` in the current working directory,
+using the [format described here][mturk-python].
 
-For MTurk, you need an `mturkconfig.json` in the [format described
-here](https://github.com/nmalkin/mturk-python). For SurveyGizmo, you should have
-a `surveygizmo.sh` that `export`s `SURVEYGIZMO_API_KEY` with your API key.
+
+[mturk-python]: https://github.com/nmalkin/mturk-python
