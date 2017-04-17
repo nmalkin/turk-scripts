@@ -15,14 +15,6 @@ import turk_common
 
 turk = mturk.MechanicalTurk()
 
-def get_completion_code(assignment):
-    answer_xml = assignment['Answer']
-    outer_answer = xmltodict.parse(answer_xml)
-    answer = outer_answer['QuestionFormAnswers']['Answer']
-
-    assert answer['QuestionIdentifier'] == 'completion_code'
-    return answer['FreeText']
-
 def get_approved_surveys(filename):
     approved = set()
     with open(filename, 'r') as f:
