@@ -1,6 +1,11 @@
-import os, boto3, argparse, json
+import os
+import argparse
+import json
+
+import boto3
 
 ENDPOINT_URL = 'https://mturk-requester{}.us-east-1.amazonaws.com'
+
 
 def get_client(config_filename='config.json', sandbox=True):
     """
@@ -25,6 +30,7 @@ def get_client(config_filename='config.json', sandbox=True):
         aws_secret_access_key=aws_secret,
     )
 
+
 def get_worker_ids(filename):
     """
     Get the worker_ids contained in the given JSON file.
@@ -37,6 +43,7 @@ def get_worker_ids(filename):
         ]
     return worker_ids
 
+
 EXTERNAL_URL_QUESTION = """<?xml version="1.0"?>
 <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
     <ExternalURL>{}</ExternalURL>
@@ -44,11 +51,13 @@ EXTERNAL_URL_QUESTION = """<?xml version="1.0"?>
 </ExternalQuestion>
 """
 
+
 def get_question(url):
     """
     Return a Question string for an External URL HIT pointing to the given URL.
     """
     return EXTERNAL_URL_QUESTION.format(url)
+
 
 class MTurkScript(object):
     """
@@ -64,8 +73,10 @@ class MTurkScript(object):
 
     def get_parser(self):
         parser = argparse.ArgumentParser(description=self.DESCRIPTION)
-        parser.add_argument('-d', '--debug', action='store_true', help='If set, use the sandbox API')
-        parser.add_argument('-c', '--config', help='Config file to use for AWS keys. Defaults to config.json', default='config.json')
+        parser.add_argument('-d', '--debug', action='store_true',
+                            help='If set, use the sandbox API')
+        parser.add_argument(
+            '-c', '--config', help='Config file to use for AWS keys. Defaults to config.json', default='config.json')
         return parser
 
     def get_client(self):
@@ -80,6 +91,7 @@ class MTurkScript(object):
         Run this script
         """
         pass
+
 
 class QualificationType(object):
     """
