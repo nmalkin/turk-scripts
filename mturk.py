@@ -1,3 +1,7 @@
+"""
+MTurk utilities
+"""
+
 import argparse
 
 import boto3
@@ -46,9 +50,14 @@ class MTurkScript(object):
         self.client = self.get_client()
 
     def get_parser(self):
+        """
+        Get the parser used for the script's command-line arguments
+
+        Override this method in an MTurkScript to add extra arguments
+        """
         parser = argparse.ArgumentParser(description=self.DESCRIPTION)
-        parser.add_argument('-d', '--debug', action='store_true',
-                            help='If set, use the sandbox API')
+        parser.add_argument('--production', action='store_true',
+                            help='If set, use the live version of MTurk, instead of the sandbox')
         return parser
 
     def get_client(self):
@@ -56,7 +65,7 @@ class MTurkScript(object):
         Get the client that connects to the MTurk API. Uses the sandbox if the
         --debug flag was set.
         """
-        return get_client(self.args.debug)
+        return get_client(not self.args.production)
 
     def run(self):
         """
