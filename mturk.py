@@ -1,4 +1,3 @@
-import os
 import argparse
 import json
 
@@ -7,27 +6,16 @@ import boto3
 ENDPOINT_URL = 'https://mturk-requester{}.us-east-1.amazonaws.com'
 
 
-def get_client(config_filename='config.json', sandbox=True):
+def get_client(sandbox=True):
     """
     Get the client that connects to the MTurk API. Uses the sandbox if the
     --debug flag was set.
     """
-    if not os.path.isfile(config_filename):
-        raise Exception('Please add the config.json file to the directory.')
-
-    with open(config_filename, 'r') as f:
-        config = json.load(f)
-
-    aws_access = config['aws_key']
-    aws_secret = config['aws_secret_key']
-
     url = ENDPOINT_URL.format('-sandbox' if sandbox else '')
     return boto3.client(
         'mturk',
         endpoint_url=url,
         region_name='us-east-1',
-        aws_access_key_id=aws_access,
-        aws_secret_access_key=aws_secret,
     )
 
 
@@ -66,7 +54,7 @@ class MTurkScript(object):
     """
     DESCRIPTION = 'An MTurk script'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         parser = self.get_parser()
         self.args = parser.parse_args()
         self.client = self.get_client()
@@ -75,8 +63,6 @@ class MTurkScript(object):
         parser = argparse.ArgumentParser(description=self.DESCRIPTION)
         parser.add_argument('-d', '--debug', action='store_true',
                             help='If set, use the sandbox API')
-        parser.add_argument(
-            '-c', '--config', help='Config file to use for AWS keys. Defaults to config.json', default='config.json')
         return parser
 
     def get_client(self):
@@ -84,7 +70,7 @@ class MTurkScript(object):
         Get the client that connects to the MTurk API. Uses the sandbox if the
         --debug flag was set.
         """
-        return get_client(self.args.config, self.args.debug)
+        return get_client(self.args.debug)
 
     def run(self):
         """
