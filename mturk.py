@@ -1,5 +1,4 @@
 import argparse
-import json
 
 import boto3
 
@@ -17,19 +16,6 @@ def get_client(sandbox=True):
         endpoint_url=url,
         region_name='us-east-1',
     )
-
-
-def get_worker_ids(filename):
-    """
-    Get the worker_ids contained in the given JSON file.
-    """
-    worker_ids = []
-    with open(filename, 'r') as f:
-        worker_ids = [
-            row['worker_id']
-            for row in json.load(f)
-        ]
-    return worker_ids
 
 
 EXTERNAL_URL_QUESTION = """<?xml version="1.0"?>
