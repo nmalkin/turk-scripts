@@ -1,0 +1,3 @@
+#!/bin/sh
+
+aws mturk get-account-balance
