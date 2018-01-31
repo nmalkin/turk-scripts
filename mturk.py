@@ -37,7 +37,7 @@ def get_question(url):
     return EXTERNAL_URL_QUESTION.format(url)
 
 
-class MTurkScript(object):
+class MTurkScript:
     """
     A class that allows easy access to a MTurk client.
     https://boto3.readthedocs.io/en/latest/reference/services/mturk.html
