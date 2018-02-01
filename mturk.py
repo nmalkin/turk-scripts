@@ -47,12 +47,19 @@ class MTurkScript:
     A class that allows easy access to a MTurk client.
     https://boto3.readthedocs.io/en/latest/reference/services/mturk.html
     """
-    DESCRIPTION = 'An MTurk script'
 
     def __init__(self):
         parser = self.get_parser()
         self.args = parser.parse_args()
         self.client = self.get_client()
+
+    def get_description(self):
+        """
+        Get the script's description, to be shown as CLI help text
+        """
+        if hasattr(self, 'DESCRIPTION'):
+            return getattr(self, 'DESCRIPTION')
+        return self.__doc__
 
     def get_parser(self):
         """
@@ -60,7 +67,7 @@ class MTurkScript:
 
         Override this method in an MTurkScript to add extra arguments
         """
-        parser = argparse.ArgumentParser(description=self.DESCRIPTION)
+        parser = argparse.ArgumentParser(description=self.get_description())
         parser.add_argument('--production', action='store_true',
                             help='If set, use the live version of MTurk, instead of the sandbox')
         return parser
