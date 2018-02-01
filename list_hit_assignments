@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+"""
+Download assignments for a given HIT
+"""
+
+import csv
+from datetime import date, datetime
+import json
+import sys
+
+import mturk
+import logger
+
+logger.init('info')
+
+
+def serialize_json(obj):
+    """
+    JSON serializer for objects not serializable by default
+
+    via https://stackoverflow.com/a/22238613
+    """
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type %s not serializable" % type(obj))
+
+
+def assignments_as_csv(assignments, output):
+    """
+    Write given assignments as a CSV to provided output
+    """
+    writer = csv.writer(output)
+
+    # Write header
+    header = ["AssignmentId", "WorkerId", "HITId", "AssignmentStatus",
+              "AutoApprovalTime", "AcceptTime", "SubmitTime", "Answer"]
+    writer.writerow(header)
+
+    for assignment in assignments:
+        values = [assignment[field] for field in header]
+        writer.writerow(values)
+
+
+class ListAssignmentsScript(mturk.MTurkScript):
+    """
+    Download assignments for the given HIT
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--hit-id', required=True, action='store')
+        parser.add_argument('--output-file', '-o', action='store')
+        parser.add_argument('--csv', action='store_true',
+                            help='Output assignments as CSV (uses JSON otherwise)')
+        return parser
+
+    def run(self):
+        response = self.client.list_assignments_for_hit(HITId=self.args.hit_id)
+        assignments = response['Assignments']
+
+        if self.args.output_file is None:
+            if self.args.csv:
+                assignments_as_csv(assignments, sys.stdout)
+            else:
+                print(json.dumps(assignments, indent=4, default=serialize_json))
+        else:
+            with open(self.args.output_file, 'w') as output_file:
+                if self.args.csv:
+                    assignments_as_csv(assignments, output_file)
+                else:
+                    json.dump(assignments, output_file,
+                              indent=4, default=serialize_json)
+
+
+if __name__ == '__main__':
+    ListAssignmentsScript().run()
