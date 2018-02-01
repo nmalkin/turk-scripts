@@ -3,10 +3,13 @@ MTurk utilities
 """
 
 import argparse
+import logging
 
 import boto3
 
 ENDPOINT_URL = 'https://mturk-requester{}.us-east-1.amazonaws.com'
+
+LOGGER = logging.getLogger(__name__)
 
 
 def get_client(sandbox=True):
@@ -14,6 +17,8 @@ def get_client(sandbox=True):
     Get the client that connects to the MTurk API. Uses the sandbox if the
     --debug flag was set.
     """
+    LOGGER.info(f"{'' if sandbox else 'NOT '}using MTurk sandbox")
+
     url = ENDPOINT_URL.format('-sandbox' if sandbox else '')
     return boto3.client(
         'mturk',
