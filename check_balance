@@ -1,3 +1,26 @@
-#!/bin/sh
+#!/usr/bin/env python
 
-aws mturk get-account-balance
+"""
+Check the account balance
+
+Works in both the sandbox and production environments
+"""
+
+import mturk
+import logger
+
+logger.init()
+
+
+class CheckAccountScript(mturk.MTurkScript):
+    """
+    Check the account balance
+    """
+
+    def run(self):
+        response = self.client.get_account_balance()
+        print(response['AvailableBalance'])
+
+
+if __name__ == '__main__':
+    CheckAccountScript().run()
