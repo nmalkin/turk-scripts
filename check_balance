@@ -9,7 +9,7 @@ Works in both the sandbox and production environments
 import mturk
 import logger
 
-logger.init()
+logger.init('debug')
 
 
 class CheckAccountScript(mturk.MTurkScript):
