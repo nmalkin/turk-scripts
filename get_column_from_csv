@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+"""
+Cut specified column from given CSV
+"""
+
+import argparse
+import csv
+import sys
+
+import logger
+logger.init('debug')
+
+
+def cut(column, input_file, output_filename):
+    """
+    Cut column from input file and write to output file or stdout if it's none
+    """
+    with open(input_file) as csvfile:
+        reader = csv.reader(csvfile)
+
+        header = reader.__next__()
+        index = header.index(column)
+
+        if output_filename is None:
+            output = sys.stdout
+        else:
+            output = open(output_filename, 'w')
+
+        for row in reader:
+            value = row[index]
+            output.write(value)
+            output.write('\n')
+
+        output.close()
+
+
+def main():
+    """Entry point"""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--column', '-c', required=True, action='store')
+    parser.add_argument('--input-file', '-i', required=True, action='store')
+    parser.add_argument('--output-file', '-o', action='store')
+    args = parser.parse_args()
+    cut(args.column, args.input_file, args.output_file)
+
+
+if __name__ == '__main__':
+    main()
