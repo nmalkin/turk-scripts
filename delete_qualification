@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+"""
+Delete qualification
+"""
+
+from datetime import datetime
+
+import mturk
+
+
+class DeleteQualification(mturk.MTurkScript):
+    """
+    Delete a Qualification.
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('id', help='Id of Qualification to delete')
+        return parser
+
+    def run(self):
+        self.client.delete_qualification_type(QualificationTypeId=self.args.id)
+        print('Qualification deleted')
+
+
+if __name__ == '__main__':
+    DeleteQualification().run()

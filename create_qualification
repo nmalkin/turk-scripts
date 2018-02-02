@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+"""
+Create qualification
+"""
+from datetime import datetime
+
+import mturk
+import logger
+
+logger.init('info')
+
+
+class CreateQualificationScript(mturk.MTurkScript):
+    """
+    Approve specified assignments for HIT
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--name', required=True, action='store')
+        parser.add_argument('--description', required=True, action='store')
+        return parser
+
+    def run(self):
+        response = self.client.create_qualification_type(
+            Name=self.args.name,
+            Description=self.args.description,
+            QualificationTypeStatus='Active',
+        )
+        qualification_id = response['QualificationType']['QualificationTypeId']
+        print('Qualification created: %s' % qualification_id)
+
+
+if __name__ == '__main__':
+    CreateQualificationScript().run()
