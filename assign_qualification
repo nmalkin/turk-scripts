@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+"""
+Assign qualification to workers
+"""
+
+import logging
+
+import mturk
+import logger
+
+logger.init('info')
+
+
+class AssignQualificationsScript(mturk.MTurkScript):
+    """
+    Assign qualification to specified workers
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--qualification-id', '-q',
+                            required=True, action='store')
+        parser.add_argument('--input-file', '-i',
+                            required=True, action='store')
+        return parser
+
+    def run(self):
+        with open(self.args.input_file) as worker_file:
+            for line in worker_file:
+                worker_id = line.strip()
+                self.logger.info('assigning qualification %s to worker %s',
+                                 self.args.qualification_id, worker_id)
+                self.client.associate_qualification_with_worker(
+                    QualificationTypeId=self.args.qualification_id,
+                    WorkerId=worker_id,
+                    IntegerValue=1,
+                    SendNotification=False
+                )
+
+
+if __name__ == '__main__':
+    AssignQualificationsScript().run()
