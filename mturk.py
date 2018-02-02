@@ -53,6 +53,9 @@ class MTurkScript:
         self.args = parser.parse_args()
         self.client = self.get_client()
 
+        # Create a logger that can be used within the class
+        self.logger = logging.getLogger(type(self).__name__)
+
     def get_description(self):
         """
         Get the script's description, to be shown as CLI help text
