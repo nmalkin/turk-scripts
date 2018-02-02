@@ -23,7 +23,8 @@ class ApproveAssignmentsScript(mturk.MTurkScript):
 
     def run(self):
         with open(self.args.input_file) as assignment_file:
-            for assignment_id in assignment_file:
+            for line in assignment_file:
+                assignment_id = line.strip()
                 self.client.approve_assignment(AssignmentId=assignment_id)
 
 
