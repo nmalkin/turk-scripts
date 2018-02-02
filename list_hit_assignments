@@ -26,14 +26,14 @@ def serialize_json(obj):
     raise TypeError("Type %s not serializable" % type(obj))
 
 
-def assignments_as_csv(assignments, fields, output):
+def assignments_as_csv(assignments, fields, output, skip_header=False):
     """
     Write given assignments as a CSV to provided output
     """
     writer = csv.writer(output)
 
-    # Write header
-    writer.writerow(fields)
+    if not skip_header:
+        writer.writerow(fields)
 
     for assignment in assignments:
         values = [assignment[field] for field in fields]
@@ -53,6 +53,8 @@ class ListAssignmentsScript(mturk.MTurkScript):
         parser.add_argument('--output-file', '-o', action='store')
         parser.add_argument('--csv', action='store_true',
                             help='Output assignments as CSV (uses JSON otherwise)')
+        parser.add_argument('--skip-header', action='store_true',
+                            help="Skip CSV file's header. Only works with --csv")
         parser.add_argument('--field', '-f', action='append',
                             help='Output only specified fields. (Flag can be repeated) Only works with --csv')
         return parser
@@ -79,13 +81,15 @@ class ListAssignmentsScript(mturk.MTurkScript):
         # Build output
         if self.args.output_file is None:
             if self.args.csv:
-                assignments_as_csv(assignments, fields, sys.stdout)
+                assignments_as_csv(assignments, fields,
+                                   sys.stdout, self.args.skip_header)
             else:
                 print(json.dumps(assignments, indent=4, default=serialize_json))
         else:
             with open(self.args.output_file, 'w') as output_file:
                 if self.args.csv:
-                    assignments_as_csv(assignments, fields, output_file)
+                    assignments_as_csv(assignments, fields,
+                                       output_file, self.args.skip_header)
                 else:
                     json.dump(assignments, output_file,
                               indent=4, default=serialize_json)
