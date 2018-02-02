@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+"""
+List workers with qualification
+"""
+
+from pprint import pprint
+
+import mturk
+import logger
+
+logger.init('info')
+
+
+class ListWorkersWithQualificationScript(mturk.MTurkScript):
+    """
+    List workers with given qualification
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('qualification_type_id')
+        return parser
+
+    def run(self):
+        response = self.client.list_workers_with_qualification_type(
+            QualificationTypeId=self.args.qualification_type_id
+        )
+        qualifications = response['Qualifications']
+        for qualification in qualifications:
+            print(qualification['WorkerId'])
+
+
+if __name__ == '__main__':
+    ListWorkersWithQualificationScript().run()
