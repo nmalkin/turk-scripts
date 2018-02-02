@@ -26,19 +26,17 @@ def serialize_json(obj):
     raise TypeError("Type %s not serializable" % type(obj))
 
 
-def assignments_as_csv(assignments, output):
+def assignments_as_csv(assignments, fields, output):
     """
     Write given assignments as a CSV to provided output
     """
     writer = csv.writer(output)
 
     # Write header
-    header = ["AssignmentId", "WorkerId", "HITId", "AssignmentStatus",
-              "AutoApprovalTime", "AcceptTime", "SubmitTime", "Answer"]
-    writer.writerow(header)
+    writer.writerow(fields)
 
     for assignment in assignments:
-        values = [assignment[field] for field in header]
+        values = [assignment[field] for field in fields]
         writer.writerow(values)
 
 
@@ -55,6 +53,8 @@ class ListAssignmentsScript(mturk.MTurkScript):
         parser.add_argument('--output-file', '-o', action='store')
         parser.add_argument('--csv', action='store_true',
                             help='Output assignments as CSV (uses JSON otherwise)')
+        parser.add_argument('--field', '-f', action='append',
+                            help='Output only specified fields. (Flag can be repeated) Only works with --csv')
         return parser
 
     def run(self):
@@ -64,19 +64,28 @@ class ListAssignmentsScript(mturk.MTurkScript):
         else:
             statuses = [self.args.assignment_status]
 
+        # Obtain assignments
         response = self.client.list_assignments_for_hit(
             HITId=self.args.hit_id, AssignmentStatuses=statuses)
         assignments = response['Assignments']
 
+        # Decide which headers to output
+        if self.args.field is None:
+            fields = ["AssignmentId", "WorkerId", "HITId", "AssignmentStatus",
+                      "AutoApprovalTime", "AcceptTime", "SubmitTime", "Answer"]
+        else:
+            fields = self.args.field
+
+        # Build output
         if self.args.output_file is None:
             if self.args.csv:
-                assignments_as_csv(assignments, sys.stdout)
+                assignments_as_csv(assignments, fields, sys.stdout)
             else:
                 print(json.dumps(assignments, indent=4, default=serialize_json))
         else:
             with open(self.args.output_file, 'w') as output_file:
                 if self.args.csv:
-                    assignments_as_csv(assignments, output_file)
+                    assignments_as_csv(assignments, fields, output_file)
                 else:
                     json.dump(assignments, output_file,
                               indent=4, default=serialize_json)
