@@ -50,13 +50,22 @@ class ListAssignmentsScript(mturk.MTurkScript):
     def get_parser(self):
         parser = super().get_parser()
         parser.add_argument('--hit-id', required=True, action='store')
+        parser.add_argument('--assignment-status', '-s', action='store',
+                            help="Show only assignments with given status. Can be one of 'Submitted'|'Approved'|'Rejected'.")
         parser.add_argument('--output-file', '-o', action='store')
         parser.add_argument('--csv', action='store_true',
                             help='Output assignments as CSV (uses JSON otherwise)')
         return parser
 
     def run(self):
-        response = self.client.list_assignments_for_hit(HITId=self.args.hit_id)
+        # Decide whether to filter by assignment status
+        if self.args.assignment_status is None:
+            statuses = ['Submitted', 'Approved', 'Rejected']
+        else:
+            statuses = [self.args.assignment_status]
+
+        response = self.client.list_assignments_for_hit(
+            HITId=self.args.hit_id, AssignmentStatuses=statuses)
         assignments = response['Assignments']
 
         if self.args.output_file is None:
