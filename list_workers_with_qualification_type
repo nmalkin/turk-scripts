@@ -4,8 +4,6 @@
 List workers with qualification
 """
 
-from pprint import pprint
-
 import mturk
 import logger
 
@@ -23,11 +21,8 @@ class ListWorkersWithQualificationScript(mturk.MTurkScript):
         return parser
 
     def run(self):
-        response = self.client.list_workers_with_qualification_type(
-            QualificationTypeId=self.args.qualification_type_id
-        )
-        qualifications = response['Qualifications']
-        for qualification in qualifications:
+        for qualification in mturk.get_pages(self.client.list_workers_with_qualification_type, 'Qualifications',
+            QualificationTypeId=self.args.qualification_type_id):
             print(qualification['WorkerId'])
 
 

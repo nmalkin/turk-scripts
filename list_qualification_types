@@ -18,11 +18,11 @@ class ListQualificationsScript(mturk.MTurkScript):
     """
 
     def run(self):
-        response = self.client.list_qualification_types(
+        for qualification_type in mturk.get_pages(self.client.list_qualification_types, 'QualificationTypes',
             MustBeOwnedByCaller=True,
             MustBeRequestable=False
-        )
-        pprint(response)
+        ):
+            pprint(qualification_type)
 
 
 if __name__ == '__main__':

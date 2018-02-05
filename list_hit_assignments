@@ -67,9 +67,8 @@ class ListAssignmentsScript(mturk.MTurkScript):
             statuses = [self.args.assignment_status]
 
         # Obtain assignments
-        response = self.client.list_assignments_for_hit(
-            HITId=self.args.hit_id, AssignmentStatuses=statuses)
-        assignments = response['Assignments']
+        assignments = list(mturk.get_pages(self.client.list_assignments_for_hit, 'Assignments',
+            HITId=self.args.hit_id, AssignmentStatuses=statuses))
 
         # Decide which headers to output
         if self.args.field is None:

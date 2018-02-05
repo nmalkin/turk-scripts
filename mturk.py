@@ -108,3 +108,28 @@ class QualificationType(object):
     CATMASTERS = "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"
     S_PHOTOMASTERS = "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"
     PHOTOMASTERS = "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
+
+
+def get_pages(action, response_keyword, **kwargs):
+    """
+    Helps return paginated MTurk responses
+
+    The action is the MTurk API call to make.
+    This function will call it repeatedly, as long a NextToken is returned,
+    indicating that there are more pages of responses.
+
+    Within each page, this function will sequentially yield every item under
+    the specified keyword in the response.
+    """
+    response = action(**kwargs)
+    if response_keyword not in response:
+        logging.error('%s not in response %s', response_keyword, response)
+
+    for item in response[response_keyword]:
+        yield item
+
+    while 'NextToken' in response:
+        kwargs.update({'NextToken': response['NextToken']})
+        response = action(**kwargs)
+        for item in response[response_keyword]:
+            yield item
