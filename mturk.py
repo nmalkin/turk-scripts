@@ -2,6 +2,7 @@
 MTurk utilities
 """
 
+import abc
 import argparse
 import logging
 
@@ -108,6 +109,57 @@ class QualificationType(object):
     CATMASTERS = "2NDP2L92HECWY8NS8H3CK0CP5L9GHO"
     S_PHOTOMASTERS = "2TGBB6BFMFFOM08IBMAFGGESC1UWJX"
     PHOTOMASTERS = "21VZU98JHSTLZ5BPP4A9NOBJEK3DPG"
+
+
+class CreateHit(abc.ABC, MTurkScript):
+    """
+    Abstract script for HIT creation
+
+    Includes common code for handling qualifications,
+    however the actual HIT creation, with the HIT's real details,
+    must be done in a subclass
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--exclude-qualification', '-q', action='append',
+                            help='Qualification ID of qualification that excludes participation in this HIT')
+        return parser
+
+    def get_qualifications(self):
+        qualifications = [
+            {
+                'QualificationTypeId': QualificationType.LOCALE,
+                'Comparator': 'EqualTo',
+                'LocaleValues': [{
+                    'Country': 'US',
+                }],
+                'RequiredToPreview': True,
+            },
+            {
+                'QualificationTypeId': QualificationType.P_APPROVED,
+                'Comparator': 'GreaterThan',
+                'IntegerValues': [95],
+                'RequiredToPreview': True,
+            },
+        ]
+
+        exclude = self.args.exclude_qualification
+        if exclude is not None:
+            for qualification_id in exclude:
+                logging.debug(
+                    'excluding workers with qualification %s', qualification_id)
+                qualifications.append({
+                    'QualificationTypeId': qualification_id,
+                    'Comparator': 'DoesNotExist',
+                    'RequiredToPreview': True,
+                })
+
+        return qualifications
+
+    @abc.abstractmethod
+    def run(self):
+        ...
 
 
 def get_pages(action, response_keyword, **kwargs):
