@@ -122,8 +122,10 @@ class CreateHit(abc.ABC, MTurkScript):
 
     def get_parser(self):
         parser = super().get_parser()
-        parser.add_argument('--exclude-qualification', '-q', action='append',
+        parser.add_argument('--exclude-qualification', action='append',
                             help='Qualification ID of qualification that excludes participation in this HIT')
+        parser.add_argument('--include-qualification', action='append',
+                            help='Qualification ID of qualification that is necessary participation in this HIT')
         return parser
 
     def get_qualifications(self):
@@ -152,6 +154,17 @@ class CreateHit(abc.ABC, MTurkScript):
                 qualifications.append({
                     'QualificationTypeId': qualification_id,
                     'Comparator': 'DoesNotExist',
+                    'RequiredToPreview': True,
+                })
+
+        include = self.args.include_qualification
+        if include is not None:
+            for qualification_id in include:
+                logging.debug(
+                    'allowing workers with qualification %s', qualification_id)
+                qualifications.append({
+                    'QualificationTypeId': qualification_id,
+                    'Comparator': 'Exists',
                     'RequiredToPreview': True,
                 })
 
