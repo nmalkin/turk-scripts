@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import mturk
+import logger
+
+logger.init('info')
+
+
+class CreateAdditionalAssignmentsScript(mturk.MTurkScript):
+    """
+    The CreateAdditionalAssignmentsForHIT operation increases the maximum number of assignments of an existing HIT.
+
+    To extend the maximum number of assignments, specify the number of additional assignments.
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--hit-id', required=True)
+        parser.add_argument('--number', '-n', required=True,
+                            type=int, help='Number of additional assignments')
+        return parser
+
+    def run(self):
+        self. client.create_additional_assignments_for_hit(
+            HITId=self.args.hit_id,
+            NumberOfAdditionalAssignments=self.args.number
+        )
+
+
+if __name__ == '__main__':
+    CreateAdditionalAssignmentsScript().run()
