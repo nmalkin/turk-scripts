@@ -7,7 +7,7 @@ List qualifications
 from pprint import pprint
 
 import mturk
-import logger
+import mturk.logger as logger
 
 logger.init('info')
 

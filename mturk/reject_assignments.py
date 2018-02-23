@@ -4,7 +4,7 @@ import abc
 import logging
 
 import mturk
-import logger
+import mturk.logger as logger
 
 logger.init('info')
 

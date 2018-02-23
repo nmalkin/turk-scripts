@@ -6,7 +6,7 @@ Create qualification
 from datetime import datetime
 
 import mturk
-import logger
+import mturk.logger as logger
 
 logger.init('info')
 

@@ -7,7 +7,7 @@ Works in both the sandbox and production environments
 """
 
 import mturk
-import logger
+import mturk.logger as logger
 
 logger.init('debug')
 

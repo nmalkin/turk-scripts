@@ -8,7 +8,7 @@ import argparse
 import csv
 import sys
 
-import logger
+import mturk.logger as logger
 logger.init('debug')
 
 

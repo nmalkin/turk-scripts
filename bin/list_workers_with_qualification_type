@@ -5,7 +5,7 @@ List workers with qualification
 """
 
 import mturk
-import logger
+import mturk.logger as logger
 
 logger.init('info')
 
