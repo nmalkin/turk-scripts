@@ -120,6 +120,8 @@ class CreateHit(abc.ABC, MTurkScript):
     must be done in a subclass
     """
 
+    MINIMUM_PERCENTAGE_APPROVED = 95
+
     def get_parser(self):
         parser = super().get_parser()
         parser.add_argument('--exclude-qualification', action='append',
@@ -141,7 +143,7 @@ class CreateHit(abc.ABC, MTurkScript):
             {
                 'QualificationTypeId': QualificationType.P_APPROVED,
                 'Comparator': 'GreaterThan',
-                'IntegerValues': [95],
+                'IntegerValues': [self.MINIMUM_PERCENTAGE_APPROVED],
                 'RequiredToPreview': True,
             },
         ]
