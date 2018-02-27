@@ -49,7 +49,8 @@ class ListAssignmentsScript(mturk.MTurkScript):
         parser = super().get_parser()
         parser.add_argument('--hit-id', required=True, action='store')
         parser.add_argument('--assignment-status', '-s', action='store',
-                            help="Show only assignments with given status. Can be one of 'Submitted'|'Approved'|'Rejected'.")
+                            choices=['Submitted', 'Approved', 'Rejected'],
+                            help='Show only assignments with given status')
         parser.add_argument('--output-file', '-o', action='store')
         parser.add_argument('--csv', action='store_true',
                             help='Output assignments as CSV (uses JSON otherwise)')
@@ -68,7 +69,7 @@ class ListAssignmentsScript(mturk.MTurkScript):
 
         # Obtain assignments
         assignments = list(mturk.get_pages(self.client.list_assignments_for_hit, 'Assignments',
-            HITId=self.args.hit_id, AssignmentStatuses=statuses))
+                                           HITId=self.args.hit_id, AssignmentStatuses=statuses))
 
         # Decide which headers to output
         if self.args.field is None:
