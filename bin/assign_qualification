@@ -23,6 +23,9 @@ class AssignQualificationsScript(mturk.MTurkScript):
                             required=True, action='store')
         parser.add_argument('--input-file', '-i',
                             required=True, action='store')
+        parser.add_argument('--notify', '-n',
+                            help='Send notification about granted qualification',
+                            action='store_true')
         return parser
 
     def run(self):
@@ -35,7 +38,7 @@ class AssignQualificationsScript(mturk.MTurkScript):
                     QualificationTypeId=self.args.qualification_id,
                     WorkerId=worker_id,
                     IntegerValue=1,
-                    SendNotification=False
+                    SendNotification=self.args.notify,
                 )
 
 
