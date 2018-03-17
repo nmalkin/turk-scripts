@@ -52,7 +52,7 @@ class MTurkScript:
     def __init__(self):
         parser = self.get_parser()
         self.args = parser.parse_args()
-        self.client = self.get_client()
+        self._client = None
 
         # Create a logger that can be used within the class
         self.logger = logging.getLogger(type(self).__name__)
@@ -76,12 +76,17 @@ class MTurkScript:
                             help='If set, use the live version of MTurk, instead of the sandbox')
         return parser
 
-    def get_client(self):
+    @property
+    def client(self):
         """
-        Get the client that connects to the MTurk API. Uses the sandbox if the
-        --debug flag was set.
+        Get the client that connects to the MTurk API.
+        Initializes it if that hasn't happened yet.
+        Uses the sandbox if the --debug flag was set.
         """
-        return get_client(not self.args.production)
+        if self._client is None:
+            self._client = get_client(not self.args.production)
+
+        return self._client
 
     def run(self):
         """

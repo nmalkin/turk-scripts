@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='mturk',
-      version='0.1.2',
+      version='0.1.3',
       description="Utilities to help interact with Amazon's Mechanical Turk API",
       url='http://github.com/nmalkin/mturk',
       author='nmalkin',
