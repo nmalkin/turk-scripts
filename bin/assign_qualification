@@ -30,6 +30,7 @@ class AssignQualificationsScript(mturk.MTurkScript):
 
     def run(self):
         with open(self.args.input_file) as worker_file:
+            assignments_made = False
             for line in worker_file:
                 worker_id = line.strip()
                 self.logger.info('assigning qualification %s to worker %s',
@@ -40,6 +41,11 @@ class AssignQualificationsScript(mturk.MTurkScript):
                     IntegerValue=1,
                     SendNotification=self.args.notify,
                 )
+                assignments_made = True
+
+            if not assignments_made:
+                self.logger.info('no one to assign %s',
+                                 self.args.qualification_id)
 
 
 if __name__ == '__main__':
