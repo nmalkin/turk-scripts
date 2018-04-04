@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='mturk',
-      version='0.1.3',
+      version='0.1.4',
       description="Utilities to help interact with Amazon's Mechanical Turk API",
       url='http://github.com/nmalkin/mturk',
       author='nmalkin',
@@ -24,5 +24,6 @@ setup(name='mturk',
           'bin/list_qualification_types',
           'bin/list_workers_with_qualification_type',
           'bin/really_delete_hit',
+          'bin/remove_qualification',
           'bin/subtract',
       ])

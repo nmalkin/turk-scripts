@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import logging
+
+import mturk
+import mturk.logger as logger
+
+logger.init('info')
+
+
+class RemoveQualificationsScript(mturk.MTurkScript):
+    """
+    Assign qualification to specified workers
+    """
+
+    def get_parser(self):
+        parser = super().get_parser()
+        parser.add_argument('--qualification-id', '-q',
+                            required=True, action='store')
+        parser.add_argument('--input-file', '-i',
+                            required=True, action='store')
+        return parser
+
+    def run(self):
+        with open(self.args.input_file) as worker_file:
+            assignments_made = False
+            for line in worker_file:
+                worker_id = line.strip()
+                self.logger.info('removing qualification %s from worker %s. No reason provided.',
+                                 self.args.qualification_id, worker_id)
+                self.client.disassociate_qualification_from_worker(
+                    QualificationTypeId=self.args.qualification_id,
+                    WorkerId=worker_id,
+                )
+                assignments_made = True
+
+            if not assignments_made:
+                self.logger.info('no one to assign %s',
+                                 self.args.qualification_id)
+
+
+if __name__ == '__main__':
+    RemoveQualificationsScript().run()
