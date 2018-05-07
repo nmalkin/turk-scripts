@@ -5,6 +5,6 @@
 
 HIT_ID=$1
 
-aws mturk --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com update-expiration-for-hit --hit-id "$HIT_ID" --expire-at "1969-01-01"
-aws mturk --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com update-hit-review-status --hit-id $HIT_ID
-aws mturk --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com delete-hit --hit-id $HIT_ID
+aws mturk --region us-east-1 --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com update-expiration-for-hit --hit-id "$HIT_ID" --expire-at "1969-01-01"
+aws mturk --region us-east-1 --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com update-hit-review-status --hit-id $HIT_ID
+aws mturk --region us-east-1 --endpoint-url https://mturk-requester-sandbox.us-east-1.amazonaws.com delete-hit --hit-id $HIT_ID
