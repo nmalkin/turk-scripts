@@ -31,7 +31,7 @@ def get_client(sandbox=True):
 EXTERNAL_URL_QUESTION = """<?xml version="1.0"?>
 <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
     <ExternalURL>{}</ExternalURL>
-    <FrameHeight>1000</FrameHeight>
+    <FrameHeight>600</FrameHeight>
 </ExternalQuestion>
 """
 
