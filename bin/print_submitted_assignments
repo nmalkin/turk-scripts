@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Usage: print_submitted_assignments <HIT_ID> [--production]
+
+list_hit_assignments --csv --skip-header --field AssignmentId --assignment-status Submitted --hit-id $@

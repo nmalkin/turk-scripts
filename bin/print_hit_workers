@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Usage: print_hit_workers <HIT_ID> [--production]
+
+list_hit_assignments --csv --skip-header --field WorkerId --hit-id $@
