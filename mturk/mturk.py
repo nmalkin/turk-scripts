@@ -133,6 +133,8 @@ class CreateHit(abc.ABC, MTurkScript):
                             help='Qualification ID of qualification that excludes participation in this HIT')
         parser.add_argument('--include-qualification', action='append',
                             help='Qualification ID of qualification that is necessary participation in this HIT')
+        parser.add_argument('--hit-type', '-t',
+                            help='The HITTypeId to use. If specified, the HIT will be created using the CreateHITWithHITType operation.')
         return parser
 
     def get_qualifications(self):
@@ -176,6 +178,18 @@ class CreateHit(abc.ABC, MTurkScript):
                 })
 
         return qualifications
+
+    def create_hit(self, **kwargs):
+        if self.args.hit_type:
+            self.logger.info(
+                'creating HIT using HITTypeId %s. Title, Description, Reward, and Keywords from calling script will be ignored.', self.args.hit_type)
+            new_args = {arg: kwargs[arg] for arg in [
+                'LifetimeInSeconds', 'MaxAssignments', 'Question']}
+            new_args.update(HITTypeId=self.args.hit_type)
+            response = self.client.create_hit_with_hit_type(**new_args)
+        else:
+            response = self.client.create_hit(**kwargs)
+        return response
 
     @abc.abstractmethod
     def run(self):
