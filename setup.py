@@ -3,7 +3,7 @@ from setuptools import setup
 setup(name='mturk',
       version='0.1.7',
       description="Utilities to help interact with Amazon's Mechanical Turk API",
-      url='http://github.com/nmalkin/mturk',
+      url='http://github.com/nmalkin/turk-scripts',
       author='nmalkin',
       license='BSD',
       packages=['mturk'],
