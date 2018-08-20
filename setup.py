@@ -7,7 +7,7 @@ setup(name='mturk',
       author='nmalkin',
       license='BSD',
       packages=['mturk'],
-      python_requires='>=3.6',
+      python_requires='>=3.7',
       install_requires=[
           'boto3>=1.5,<2',
       ],
