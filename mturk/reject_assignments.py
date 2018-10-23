@@ -11,10 +11,18 @@ logger.init('info')
 
 class RejectAssignmentsScript(abc.ABC, mturk.MTurkScript):
     """
-    Abstract script to remove specified assignments for HIT
+    Abstract script to reject specified assignments for HIT
 
     All implementations need to do is implement the FEEDBACK property,
-    specifying which manage to send workers when their assignments are being rejected.
+    specifying which message to send workers when their assignments are being rejected.
+
+    For example:
+
+    class MyRejectionScript(RejectAssignmentsScript):
+        self.FEEDBACK = 'Sorry…'
+    
+    Then run this script, providing as an argument the name of a file with 
+    the assignmentIds to be rejected, one per line.
     """
 
     @property
